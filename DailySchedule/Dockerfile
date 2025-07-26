@@ -1,5 +1,4 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
@@ -13,11 +12,11 @@ COPY DailySchedule/DailySchedule.csproj DailySchedule/
 WORKDIR /src/DailySchedule
 RUN dotnet restore
 
-# Copy source code
+# Copy semua source code
 COPY DailySchedule/. .
 
-RUN dotnet build -c $BUILD_CONFIGURATION -o /app/build
-RUN dotnet publish -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet build -c ${BUILD_CONFIGURATION} -o /app/build
+RUN dotnet publish -c ${BUILD_CONFIGURATION} -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
