@@ -19,7 +19,7 @@ DailySchedule adalah web service API yang dibuat dengan .NET 8, PostgreSQL, JWT 
 ├── appsetting.json
 
 ## Cara Jalankan Projek
-1. Masuk Projek & Install point" berikut
+1. Masuk Projek & Install point" berikut :
    a. dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
    b. dotnet add package Npgsql
    c. dotnet add package Microsoft.IdentityModel.Tokens
