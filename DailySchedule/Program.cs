@@ -48,4 +48,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+// FIX: Ambil PORT dari environment, fallback ke 3000 jika tidak ada
+var port = Environment.GetEnvironmentVariable("PORT") ?? "3000";
+app.Run($"http://0.0.0.0:{port}");
