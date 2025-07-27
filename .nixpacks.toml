@@ -2,10 +2,10 @@
 nixpkgs = ["dotnet-sdk_8"]
 
 [phases.install]
-cmds = ["dotnet restore"]
+cmds = ["cd DailySchedule && dotnet restore"]
 
 [phases.build]
-cmds = ["dotnet publish --no-restore -c Release -o out"]
+cmds = ["cd DailySchedule && dotnet publish --no-restore -c Release -o out"]
 
 [start]
-cmd = "./out/DailySchedule"
+cmd = "./DailySchedule/out/DailySchedule"
