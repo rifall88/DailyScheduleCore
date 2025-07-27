@@ -1,26 +1,23 @@
-# Image base ASP.NET
+# Base image ASP.NET runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-# Image untuk build .NET project
+# Build image pakai SDK
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy semua file
+# Copy semua file ke container
 COPY . .
 
-# Tentukan path ke project
-WORKDIR /src/DailySchedule
-
 # Restore dependencies
-RUN dotnet restore
+RUN dotnet restore "./DailySchedule.csproj"
 
 # Build dan publish
-RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./DailySchedule.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# Final stage: jalankan dari hasil publish
+# Final image
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .

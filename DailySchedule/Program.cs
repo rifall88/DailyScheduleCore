@@ -4,9 +4,15 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var jwtKey = builder.Configuration["Jwt:Key"]
-             ?? throw new Exception("JWT key tidak ditemukan di konfigurasi (appsettings.json)!");
+// Ambil JWT Key dan Connection String dari environment variable
+builder.Configuration["Jwt:Key"] = Environment.GetEnvironmentVariable("JWT_KEY");
+builder.Configuration["ConnectionStrings:DefaultConnection"] = Environment.GetEnvironmentVariable("DEFAULT_CONNECTION");
 
+// Validasi JWT Key wajib ada
+var jwtKey = builder.Configuration["Jwt:Key"]
+             ?? throw new Exception("JWT key tidak ditemukan di environment variable!");
+
+// Konfigurasi JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -21,7 +27,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -34,6 +39,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Middleware kustom kamu
 app.UseMiddleware<authMiddleware>();
 
 app.UseAuthentication();
