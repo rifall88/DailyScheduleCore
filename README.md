@@ -31,4 +31,7 @@ DailySchedule adalah web service API yang dibuat dengan .NET 8, PostgreSQL, JWT 
 5. masuk sesuai port yang sudah di sediakan ke swagger
    contoh http://localhost:5068/swagger/index.html
 6. Lalu uji coba di postman dengan enpoint sesuai yang ada di swaggwer
+
+
+## MOHON MAAF KAK DEPLOYNYA GA BISA, ERROR SUDAH 2 HARI SAYA COBA TAPI TETAP ERROR🙏
    
