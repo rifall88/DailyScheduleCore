@@ -4,7 +4,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Ambil JWT Key dan Connection String dari environment variable
+// Ambil nilai JWT_KEY dan DEFAULT_CONNECTION dari Environment Variable
 var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
 var connectionString = Environment.GetEnvironmentVariable("DEFAULT_CONNECTION");
 
@@ -17,7 +17,7 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Configuration["Jwt:Key"] = jwtKey;
 builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
 
-// Konfigurasi JWT Authentication
+// Tambahkan service JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -38,20 +38,23 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Set port Railway (gunakan PORT dari env var atau default 3000)
+// Tentukan PORT yang digunakan Railway (gunakan default 3000 jika tidak ada)
 var port = Environment.GetEnvironmentVariable("PORT") ?? "3000";
 app.Urls.Add($"http://*:{port}");
 
-// Aktifkan Swagger
+// Aktifkan Swagger UI
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// Kecualikan middleware custom auth untuk swagger
+// Jalankan authMiddleware kecuali untuk swagger dan favicon
 app.UseWhen(
-    context => !context.Request.Path.StartsWithSegments("/swagger"),
+    context =>
+        !context.Request.Path.StartsWithSegments("/swagger") &&
+        !context.Request.Path.StartsWithSegments("/favicon.ico"),
     appBuilder => appBuilder.UseMiddleware<authMiddleware>()
 );
 
+// Middleware urutan penting
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
