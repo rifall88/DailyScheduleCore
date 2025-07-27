@@ -5,7 +5,7 @@ nixPkgs = ["dotnet-sdk_8"]
 cmds = ["cd DailySchedule && dotnet restore"]
 
 [phases.build]
-cmds = ["cd DailySchedule && dotnet publish --no-restore -c Release -o out"]
+cmds = ["cd DailySchedule && dotnet publish --no-restore -c Release -r linux-x64 -o out"]
 
 [start]
-cmd = "dotnet DailySchedule/out/DailySchedule.dll"
+cmd = "./DailySchedule/out/DailySchedule"
