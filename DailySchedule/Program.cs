@@ -33,14 +33,15 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Aktifkan Swagger di semua environment
+app.UseSwagger();
+app.UseSwaggerUI();
 
-// Middleware kustom kamu
-app.UseMiddleware<authMiddleware>();
+// KECUALIKAN MIDDLEWARE AUTH UNTUK SWAGGER
+app.UseWhen(
+    context => !context.Request.Path.StartsWithSegments("/swagger"),
+    appBuilder => appBuilder.UseMiddleware<authMiddleware>()
+);
 
 app.UseAuthentication();
 app.UseAuthorization();
