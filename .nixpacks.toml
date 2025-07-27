@@ -1,6 +1,9 @@
 [phases.setup]
 nixpkgs = ["dotnet-sdk_8"]
 
+[phases.install]
+cmds = ["dotnet restore"]
+
 [phases.build]
 cmds = ["dotnet publish --no-restore -c Release -o out"]
 
