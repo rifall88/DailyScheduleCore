@@ -1,22 +1,19 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using DailySchedule.Middleware; // Pastikan authMiddleware ada di namespace ini
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Ambil nilai dari environment Railway
+// Ambil nilai JWT_KEY dan DEFAULT_CONNECTION dari Environment Variable
 var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
 var connectionString = Environment.GetEnvironmentVariable("DEFAULT_CONNECTION");
 
-// Validasi variabel lingkungan
 if (string.IsNullOrEmpty(jwtKey))
     throw new Exception("JWT_KEY belum diatur di environment variable Railway");
 
 if (string.IsNullOrEmpty(connectionString))
     throw new Exception("DEFAULT_CONNECTION belum diatur di environment variable Railway");
 
-// Konfigurasi appsettings
 builder.Configuration["Jwt:Key"] = jwtKey;
 builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
 
@@ -41,34 +38,25 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Tentukan port dari Railway atau fallback ke 3000
+// Tentukan PORT yang digunakan Railway (gunakan default 3000 jika tidak ada)
 var port = Environment.GetEnvironmentVariable("PORT") ?? "3000";
 app.Urls.Add($"http://*:{port}");
 
-// Aktifkan Swagger (akses di /swagger)
+// Aktifkan Swagger UI
 app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "DailySchedule API V1");
-    c.RoutePrefix = "swagger";
-});
+app.UseSwaggerUI();
 
-// Middleware
-app.UseAuthentication();
-app.UseAuthorization();
-
-// Middleware custom kecuali untuk swagger dan favicon
+// Jalankan authMiddleware kecuali untuk swagger dan favicon
 app.UseWhen(
     context =>
         !context.Request.Path.StartsWithSegments("/swagger") &&
         !context.Request.Path.StartsWithSegments("/favicon.ico"),
-    appBuilder =>
-    {
-        appBuilder.UseMiddleware<authMiddleware>();
-    }
+    appBuilder => appBuilder.UseMiddleware<authMiddleware>()
 );
 
-// Routing Controller
+// Middleware urutan penting
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
