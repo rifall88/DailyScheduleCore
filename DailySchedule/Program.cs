@@ -5,12 +5,17 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Ambil JWT Key dan Connection String dari environment variable
-builder.Configuration["Jwt:Key"] = Environment.GetEnvironmentVariable("JWT_KEY");
-builder.Configuration["ConnectionStrings:DefaultConnection"] = Environment.GetEnvironmentVariable("DEFAULT_CONNECTION");
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+var connectionString = Environment.GetEnvironmentVariable("DEFAULT_CONNECTION");
 
-// Validasi JWT Key wajib ada
-var jwtKey = builder.Configuration["Jwt:Key"]
-             ?? throw new Exception("JWT key tidak ditemukan di environment variable!");
+if (string.IsNullOrEmpty(jwtKey))
+    throw new Exception("JWT_KEY belum diatur di environment variable Railway");
+
+if (string.IsNullOrEmpty(connectionString))
+    throw new Exception("DEFAULT_CONNECTION belum diatur di environment variable Railway");
+
+builder.Configuration["Jwt:Key"] = jwtKey;
+builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
 
 // Konfigurasi JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -33,11 +38,15 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Aktifkan Swagger di semua environment
+// Set port Railway (gunakan PORT dari env var atau default 3000)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "3000";
+app.Urls.Add($"http://*:{port}");
+
+// Aktifkan Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// KECUALIKAN MIDDLEWARE AUTH UNTUK SWAGGER
+// Kecualikan middleware custom auth untuk swagger
 app.UseWhen(
     context => !context.Request.Path.StartsWithSegments("/swagger"),
     appBuilder => appBuilder.UseMiddleware<authMiddleware>()
@@ -45,9 +54,6 @@ app.UseWhen(
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
-// FIX: Ambil PORT dari environment, fallback ke 3000 jika tidak ada
-var port = Environment.GetEnvironmentVariable("PORT") ?? "3000";
-app.Run($"http://0.0.0.0:{port}");
+app.Run();
