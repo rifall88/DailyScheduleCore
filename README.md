@@ -25,13 +25,13 @@ DailySchedule adalah web service API yang dibuat dengan .NET 8, PostgreSQL, JWT 
    c. dotnet add package Microsoft.IdentityModel.Tokens
    d. dotnet add package System.IdentityModel.Tokens.Jwt
    e. dotnet add package BCrypt.Net-Next
-3. Beri isi Key dan DefaultConnection yang ada di appsetting.json
+3. Beri isi Key dan DefaultConnection yang ada di appsetting.json, untuk Key isi terserah untuk DefaultConnection isinya seperti ini : "Host=localhost;Port=5432;Database=namadatabase;Username=postgres;Password=pwdb"
 2. Jalankan dotnet restore
 3. Jalankan dotnet build
 4. jalankan dotnet run
 5. masuk sesuai port yang sudah di sediakan ke swagger
    contoh http://localhost:5068/swagger/index.html
-6. Lalu uji coba di postman dengan enpoint sesuai yang ada di swaggwer
+7. Lalu uji coba di postman dengan enpoint sesuai yang ada di swaggwer
 
 
 ## MOHON MAAF KAK DEPLOYNYA GA BISA, ERROR SUDAH 2 HARI SAYA COBA TAPI TETAP ERROR🙏
