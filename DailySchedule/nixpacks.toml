@@ -1,0 +1,8 @@
+[phases.setup]
+nixpkgs = ["dotnet-sdk_8"]
+
+[phases.build]
+cmds = ["dotnet restore", "dotnet publish -c Release -o out"]
+
+[start]
+cmd = "dotnet out/DailySchedule.dll"
