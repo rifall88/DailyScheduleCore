@@ -39,7 +39,7 @@ public class authMiddleware
         if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
         {
             context.Response.StatusCode = 401;
-            await context.Response.WriteAsJsonAsync(new { message = "Akses ditolak: Token tidak ditemukan atau format salah." });
+            await context.Response.WriteAsJsonAsync(new { message = "Token tidak ditemukan atau format salah." });
             return;
         }
 
